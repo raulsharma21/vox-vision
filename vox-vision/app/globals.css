@@ -107,6 +107,28 @@ body {
   font-weight: 300; /* Thin */
 }
 
+@font-face {
+  font-family: 'Inconsolata';
+  src: url('./fonts/Inconsolata-VariableFont_wdth,wght.ttf') format('truetype');
+  font-weight: 200 900; /* Adjust based on the font's weight range */
+  font-display: swap;   /* Ensure text is displayed with a fallback font while loading */
+}
+
+.inconsolata-xl {
+  font-family: 'Inconsolata', monospace;
+  font-size: 90px;
+}
+
+.inconsolata-lg {
+  font-family: 'Inconsolata', monospace;
+  font-size: 50px;
+}
+
+.inconsolata-med {
+  font-family: 'Inconsolata', monospace;
+  font-size: 50px;
+}
+
 /* Font Classes for MomcakeBold */
 .momcake-bold {
   font-family: 'MomcakeBold', sans-serif;

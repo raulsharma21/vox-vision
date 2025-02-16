@@ -288,7 +288,8 @@ export default function VoxVision() {
 
   return (
     <div className="w-full max-w-4xl mx-auto flex flex-col items-center">
-      <h1 className="momcake-thin-xl font-bold mb-8 text-citron">VoxVision</h1>
+      <h1 className="inconsolata-xl font-light mb-8 text-citron">VoxVision</h1>
+
       <div className="w-full space-y-4">
         <div className="relative">
           <Input
@@ -323,7 +324,7 @@ export default function VoxVision() {
       )}
       {result && (
         <div className="mt-8 w-full">
-          <h2 className="text-2xl momcake-thin-med font-semibold mb-4 text-citron">Translation:</h2>
+          <h2 className="inconsolata-med font-thin mb-4 text-citron">Translation:</h2>
           <div className="bg-walnut-brown rounded-md overflow-hidden">
             <div className="max-h-[600px] overflow-y-auto">
               <img 
