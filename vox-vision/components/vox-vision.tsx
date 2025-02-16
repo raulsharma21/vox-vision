@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Mic } from "lucide-react"
@@ -11,6 +11,129 @@ export default function VoxVision() {
   const [result, setResult] = useState("")
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
+  const [isListening, setIsListening] = useState(false)
+  const [recognition, setRecognition] = useState<SpeechRecognition | null>(null)
+  const [audioContext, setAudioContext] = useState<AudioContext | null>(null)
+
+  // Initialize audio context
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setAudioContext(new (window.AudioContext || window.webkitAudioContext)());
+    }
+  }, []);
+
+  // Sound effect functions
+  const playStartSound = useCallback(() => {
+    if (!audioContext) return;
+    
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+    
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+    
+    // Start sound configuration
+    oscillator.type = 'sine';
+    oscillator.frequency.setValueAtTime(660, audioContext.currentTime); // Higher pitch
+    oscillator.frequency.setValueAtTime(880, audioContext.currentTime + 0.1);
+    
+    gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+    gainNode.gain.linearRampToValueAtTime(0.3, audioContext.currentTime + 0.05);
+    gainNode.gain.linearRampToValueAtTime(0, audioContext.currentTime + 0.2);
+    
+    oscillator.start(audioContext.currentTime);
+    oscillator.stop(audioContext.currentTime + 0.2);
+  }, [audioContext]);
+
+  const playStopSound = useCallback(() => {
+    if (!audioContext) return;
+    
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+    
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+    
+    // Stop sound configuration
+    oscillator.type = 'sine';
+    oscillator.frequency.setValueAtTime(880, audioContext.currentTime); // Start high
+    oscillator.frequency.setValueAtTime(660, audioContext.currentTime + 0.1); // End low
+    
+    gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+    gainNode.gain.linearRampToValueAtTime(0.3, audioContext.currentTime + 0.05);
+    gainNode.gain.linearRampToValueAtTime(0, audioContext.currentTime + 0.2);
+    
+    oscillator.start(audioContext.currentTime);
+    oscillator.stop(audioContext.currentTime + 0.2);
+  }, [audioContext]);
+
+  // Initialize speech recognition
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      
+      if (!SpeechRecognition) {
+        console.error('Speech recognition not supported');
+        return;
+      }
+
+      const recognitionInstance = new SpeechRecognition();
+      recognitionInstance.continuous = false;
+      recognitionInstance.interimResults = false;
+      recognitionInstance.lang = 'en-US';
+
+      recognitionInstance.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        setInput(transcript.toLowerCase());
+        setIsListening(false);
+        playStopSound();
+      };
+
+      recognitionInstance.onerror = (event) => {
+        console.error('Speech recognition error:', event.error);
+        setError('Failed to recognize speech. Please try again.');
+        setIsListening(false);
+        playStopSound();
+      };
+
+      recognitionInstance.onend = () => {
+        setIsListening(false);
+        // Only play stop sound if it wasn't already played by onresult
+        if (isListening) {
+          playStopSound();
+        }
+      };
+
+      setRecognition(recognitionInstance);
+    }
+  }, [isListening, playStopSound]);
+
+  const handleVoiceInput = async () => {
+    if (!recognition) {
+      setError('Speech recognition is not supported in your browser.');
+      return;
+    }
+
+    if (!audioContext) {
+      setError('Audio is not supported in your browser.');
+      return;
+    }
+
+    // Resume AudioContext if it was suspended (browser autoplay policy)
+    if (audioContext.state === 'suspended') {
+      await audioContext.resume();
+    }
+
+    if (isListening) {
+      recognition.stop();
+      setIsListening(false);
+    } else {
+      setError('');
+      playStartSound();
+      recognition.start();
+      setIsListening(true);
+    }
+  };
 
   const handleGenerate = async () => {
     if (!input.trim()) {
@@ -123,11 +246,6 @@ export default function VoxVision() {
     }
   }
 
-  const handleVoiceInput = () => {
-    // Placeholder for voice input functionality
-    console.log("Voice input activated")
-  }
-
   return (
     <div className="w-full max-w-4xl mx-auto flex flex-col items-center">
       <h1 className="momcake-thin-xl font-bold mb-8 text-citron">VoxVision</h1>
@@ -142,7 +260,10 @@ export default function VoxVision() {
           />
           <button
             onClick={handleVoiceInput}
-            className="absolute right-2 top-1/2 transform -translate-y-1/2 text-citron hover:text-citron/80"
+            className={`absolute right-2 top-1/2 transform -translate-y-1/2 
+                       text-citron hover:text-citron/80 transition-all
+                       ${isListening ? 'animate-pulse text-red-400' : ''}`}
+            title={isListening ? 'Stop listening' : 'Start voice input'}
           >
             <Mic size={20} />
           </button>
@@ -165,7 +286,6 @@ export default function VoxVision() {
           <h2 className="text-2xl momcake-thin-med font-semibold mb-4 text-citron">Translation:</h2>
           <div className="bg-walnut-brown rounded-md overflow-hidden">
             <div className="max-h-[600px] overflow-y-auto">
-              {/* Using regular img tag for data URL support */}
               <img 
                 src={result} 
                 alt="Sign language translation" 
