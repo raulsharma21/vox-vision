@@ -289,7 +289,6 @@ export default function VoxVision() {
   return (
     <div className="w-full max-w-4xl mx-auto flex flex-col items-center">
       <h1 className="inconsolata-xl font-light mb-8 text-citron">VoxVision</h1>
-
       <div className="w-full space-y-4">
         <div className="relative">
           <Input

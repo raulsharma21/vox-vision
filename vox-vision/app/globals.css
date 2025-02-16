@@ -116,17 +116,22 @@ body {
 
 .inconsolata-xl {
   font-family: 'Inconsolata', monospace;
-  font-size: 90px;
+  font-size: 120px;
 }
 
 .inconsolata-lg {
   font-family: 'Inconsolata', monospace;
-  font-size: 50px;
+  font-size:65px;
 }
 
 .inconsolata-med {
   font-family: 'Inconsolata', monospace;
-  font-size: 50px;
+  font-size: 35px;
+}
+
+.inconsolata-sm {
+  font-family: 'Inconsolata', monospace;
+  font-size: 20px;
 }
 
 /* Font Classes for MomcakeBold */
