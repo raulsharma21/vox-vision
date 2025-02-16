@@ -157,8 +157,28 @@ body {
 
 .momcake-thin-xl {
   font-family: 'MomcakeThin', sans-serif;
-  font-size: 72px;
+  font-size: 88px;
 }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.5s ease-out;
+}
+
+/* Add a subtle text glow to the title */
+.text-glow {
+  text-shadow: 0 0 10px rgba(205, 211, 146, 0.3);
+}
+
+/* Enhanced input focus styles */
+.input-focus-glow:focus {
+  box-shadow: 0 0 10px rgba(205, 211, 146, 0.2);
+}
+
 
 
 @layer base {
