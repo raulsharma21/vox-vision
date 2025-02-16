@@ -6,6 +6,46 @@ import { Input } from "@/components/ui/input"
 import { Mic } from "lucide-react"
 import Footer from "./footer"
 
+interface SpeechRecognitionEvent extends Event {
+  results: {
+    [key: number]: {
+      [key: number]: {
+        transcript: string;
+      };
+    };
+  };
+}
+
+interface SpeechRecognitionErrorEvent extends Event {
+  error: string;
+  message?: string;
+}
+
+
+interface SpeechRecognition extends EventTarget {
+  continuous: boolean;
+  interimResults: boolean;
+  lang: string;
+  start: () => void;
+  stop: () => void;
+  onresult: (event: SpeechRecognitionEvent) => void;
+  onerror: (event: SpeechRecognitionErrorEvent) => void;  // Changed from Error to SpeechRecognitionErrorEvent
+  onend: () => void;
+}
+
+interface SpeechRecognitionConstructor {
+  new (): SpeechRecognition;
+}
+
+declare global {
+  interface Window {
+    SpeechRecognition: SpeechRecognitionConstructor;
+    webkitSpeechRecognition: SpeechRecognitionConstructor;
+    AudioContext: typeof AudioContext;
+    webkitAudioContext: typeof AudioContext;
+  }
+}
+
 export default function VoxVision() {
   const [input, setInput] = useState("")
   const [result, setResult] = useState("")
@@ -89,7 +129,7 @@ export default function VoxVision() {
         playStopSound();
       };
 
-      recognitionInstance.onerror = (event) => {
+      recognitionInstance.onerror = (event: SpeechRecognitionErrorEvent) => {
         console.error('Speech recognition error:', event.error);
         setError('Failed to recognize speech. Please try again.');
         setIsListening(false);
