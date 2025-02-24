@@ -1,7 +1,7 @@
 <img width="1320" alt="Screenshot 2025-02-16 at 8 40 26 AM" src="https://github.com/user-attachments/assets/757e0ec9-e99b-4491-abc5-8b15267d4eca" />
 
 # VoxVision
-VoxVision is an innovative web application that bridges communication gaps by translating text and speech into American Sign Language (ASL). This project aims to make sign language more accessible and facilitate better communication between hearing and hearing-impaired individuals.
+VoxVision is my submission to Santa Clara University's 2025 Hack For Humanity. I came up with a web application that bridges communication gaps by translating text and speech into American Sign Language (ASL). This project aims to make sign language more accessible and facilitate better communication between hearing and hearing-impaired individuals.
 
 
 
